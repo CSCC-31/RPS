@@ -1,38 +1,35 @@
 .model small
 .stack 100h
 .data
-    line1   db 13,10, '--------------------------------------------------$'
-    line2   db 13,10, '     Welcome to our RPS Game! Choose your pick$'
-    line3   db 13,10, '--------------------------------------------------$'
-    line4   db 13,10, '      ***                  |$'
-    line5   db 13,10, '     *****                 |$'
-    line6   db 13,10, '    *******                |Rock$'
-    line7   db 13,10, '     *****                 |$'
-    line8   db 13,10, '      ***                  |$'
-    line9   db 13,10, '                           |$'
-    line10  db 13,10, '    -------                |$'
-    line11  db 13,10, '    |     |                |$'
-    line12  db 13,10, '    |     |                |Paper$'
-    line13  db 13,10, '    |     |                |$'
-    line14  db 13,10, '    -------                |$'
-    line15  db 13,10, '                           |$'
-    line16  db 13,10, '     (0)(0)                |$'
-    line17  db 13,10, '      //\\                 |$'
-    line18  db 13,10, '     //--\\                |Scissor$'
-    line19  db 13,10, '    //    \\               |$'
-    line20  db 13,10, '   //      \\              |$'
-    line21  db 13,10, '--------------------------------------------------$'
+    line1   db 13,10, '|-----------------------------------------------------------------------------|$'
+    line2   db 13,10, '|                          Welcome to our RPS Game!                           |$'    
+    line3   db 13,10, '|-----------------------------------------------------------------------------|$'
+    line4   db 13,10, '|                                                                             |$'
+    line5   db 13,10, '| [====================]   [=====================]   [=====================]  |$'
+    line6   db 13,10, '| ||     ********     ||   ||   ______________  ||   ||       (0)(0)      ||  |$'
+    line7   db 13,10, '| ||    **********    ||   ||   |////////////|  ||   ||        \\//       ||  |$'
+    line8   db 13,10, '| ||   ************   ||   ||   |////////////|  ||   ||         \/        ||  |$'
+    line9   db 13,10, '| ||  **************  ||   ||   |////////////|  ||   ||        //\\       ||  |$'
+    line10  db 13,10, '| ||   ************   ||   ||   |////////////|  ||   ||       //  \\      ||  |$'
+    line11  db 13,10, '| ||    **********    ||   ||   |////////////|  ||   ||      //    \\     ||  |$'
+    line12  db 13,10, '| ||     ********     ||   ||   --------------  ||   ||     //      \\    ||  |$'
+    line13  db 13,10, '| [====================]   [=====================]   [=====================]  |$'
+    line14  db 13,10, '|         ROCK                      PAPER                    SCISSORS         |$'
+    line15  db 13,10, '|         (1)                        (2)                       (3)            |$'
+    line16  db 13,10, '|                                                                             |$'
+    line17  db 13,10, '|                                                                             |$'
+    line18  db 13,10, '|                                                                             |$'
+    line19  db 13,10, '|=============================================================================|$'
 
-    prompt      db 13,10, 'Press 1 for Rock, 2 for Paper, 3 for Scissor, 0 to Quit:$'
+   
+    
+    prompt      db 13,10, '        Press [1] for Rock, [2] for Paper, [3] for Scissor, [0] to Quit:$'
     invalid_msg db 13,10, 'Invalid choice, pick again.$'
     user_msg    db 13,10, 'You chose: $'
     comp_msg    db 13,10, 'Computer chose: $'
     win_msg     db 13,10, 'You Win!$'
     lose_msg    db 13,10, 'Computer Wins!$'
     draw_msg    db 13,10, 'It''s a Tie!$'
-    score_msg   db 13,10, 'Score - You: $'
-    comp_score_msg db ' Computer: $'
-    draw_score_msg db ' Draws: $'
 
     rock_msg    db 'Rock$'
     paper_msg   db 'Paper$'
@@ -41,7 +38,11 @@
     user_score   db 0
     comp_score   db 0
     draw_score   db 0
-
+    
+    start_score_msg db 13,10, '                  [ SCORE: You: $'
+    comp_score_msg      db ' | Computer: $'
+    draw_score_msg      db ' | Draws: $'
+    score_end       db ' ]',13,10,'$'
 .code
 start:
     mov ax, @data
@@ -104,10 +105,6 @@ ShowMenu proc
     lea dx, line18
     int 21h
     lea dx, line19
-    int 21h
-    lea dx, line20
-    int 21h
-    lea dx, line21
     int 21h
     ret
 ShowMenu endp
@@ -211,30 +208,33 @@ CompareChoices endp
 
 ShowScore proc
     mov ah, 09h
-    lea dx, score_msg
+    lea dx, start_score_msg
     int 21h
+
     mov al, user_score
     call PrintNum
 
     lea dx, comp_score_msg
     mov ah, 09h
     int 21h
+
     mov al, comp_score
     call PrintNum
 
     lea dx, draw_score_msg
     mov ah, 09h
     int 21h
+
     mov al, draw_score
     call PrintNum
 
-    mov dl, 13
-    mov ah, 02h
+    lea dx, score_end
+    mov ah, 09h
     int 21h
-    mov dl, 10
-    int 21h
+
     ret
 ShowScore endp
+
 
 ShowChoice proc
     cmp al, 1
