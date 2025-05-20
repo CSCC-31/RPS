@@ -21,28 +21,29 @@
     line18  db 13,10, '|                                                                             |$'
     line19  db 13,10, '|=============================================================================|$'
 
-   
-    
-    prompt      db 13,10, '        Press [1] for Rock, [2] for Paper, [3] for Scissor, [0] to Quit:$'
-    invalid_msg db 13,10, 'Invalid choice, pick again.$'
-    user_msg    db 13,10, 'You chose: $'
-    comp_msg    db 13,10, 'Computer chose: $'
-    win_msg     db 13,10, 'You Win!$'
-    lose_msg    db 13,10, 'Computer Wins!$'
-    draw_msg    db 13,10, 'It''s a Tie!$'
+    prompt          db 13,10, '        Press [1] for Rock, [2] for Paper, [3] for Scissor, [0] to Quit:$'
+    invalid_msg     db 13,10, 'Invalid choice, pick again.$'
+    user_msg        db 13,10, 'You chose: $'
+    comp_msg        db 13,10, 'Computer chose: $'
+    win_msg         db 13,10, 'You Win!$'
+    lose_msg        db 13,10, 'Computer Wins!$'
+    draw_msg        db 13,10, 'It''s a Tie!$'
 
-    rock_msg    db 'Rock$'
-    paper_msg   db 'Paper$'
-    scissor_msg db 'Scissor$'
+    rock_msg        db 'Rock$'
+    paper_msg       db 'Paper$'
+    scissor_msg     db 'Scissor$'
 
-    user_score   db 0
-    comp_score   db 0
-    draw_score   db 0
+    user_score      db 0
+    comp_score      db 0
+    draw_score      db 0
     
-    start_score_msg db 13,10, '                  [ SCORE: You: $'
+    start_score_msg     db 13,10, '                  [ SCORE: You: $'
     comp_score_msg      db ' | Computer: $'
     draw_score_msg      db ' | Draws: $'
-    score_end       db ' ]',13,10,'$'
+    score_end           db ' ]',13,10,'$'
+
+    prompt_play_again      db 13,10, 'Game over! Enter [1] to Play Again or [0] to Exit: $'
+    invalid_play_again_msg db 13,10, 'Invalid choice! Please press 1 to Play Again or 0 to Exit: $'
 .code
 start:
     mov ax, @data
@@ -60,6 +61,42 @@ main_loop:
     call ShowResults
     call CompareChoices
     call ShowScore
+
+    mov al, user_score
+    cmp al, 5
+    je GameOver
+    mov al, comp_score
+    cmp al, 5
+    je GameOver
+    mov al, draw_score
+    cmp al, 5
+    je GameOver
+    jmp main_loop
+
+GameOver:
+   
+    mov ah, 09h
+    lea dx, prompt_play_again
+    int 21h
+
+wait_choice:
+    mov ah, 01h
+    int 21h
+    sub al, '0'
+    cmp al, 0
+    je ExitGame
+    cmp al, 1
+    je ResetScores
+    
+    lea dx, invalid_play_again_msg
+    mov ah, 09h
+    int 21h
+    jmp wait_choice
+
+ResetScores:
+    mov user_score, 0
+    mov comp_score, 0
+    mov draw_score, 0
     jmp main_loop
 
 ExitGame:
@@ -265,4 +302,3 @@ PrintNum proc
 PrintNum endp
 
 end start
-
